@@ -1,0 +1,79 @@
+.card--wrapper {
+  background: #0b0b0d;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.card--border {
+  background: #e8615a;
+  border-radius: 6px;
+  padding: 1px;
+}
+
+.card {
+  border-radius: 6px;
+  padding: 4px 4px 20px 4px;
+}
+
+.card-shadow {
+  box-shadow: 0 0 6px rgba(156, 50, 48, 0.6), 0 0 12px rgba(156, 50, 48, 0.4);
+}
+
+.text-shadow--glow {
+  text-shadow: -9px -6px 40px currentcolor;
+}
+
+.clipped-card {
+  -webkit-clip-path: polygon(
+    -2px -2px,
+    101% -2px,
+    100.5% calc(100.5% - 1rem + 2px),
+    calc(100.5% - 1rem + -5px) 101%,
+    -2px 110%
+  );
+  clip-path: polygon(
+    -2px -2px,
+    101% -2px,
+    100.5% calc(100.5% - 1rem + 2px),
+    calc(100.5% - 1rem + -5px) 101%,
+    -2px 110%
+  );
+}
+
+.pad {
+  background-color: #1e181e;
+  background-color: #000000;
+  border: 1px solid #9c3230;
+  box-shadow: 0px 0px 150px 22px rgba(156, 50, 48, 0.4);
+  -webkit-box-shadow: 0px 0px 150px 22px rgba(156, 50, 48, 0.4);
+  -moz-box-shadow: 0px 0px 150px 22px rgba(156, 50, 48, 0.4);
+  clip-path: polygon(
+    -2px -2px,
+    100.5% -2px,
+    100.5% calc(100% - 1rem + 2px),
+    calc(100% - 1rem + -8px) 103%,
+    -2px 103%
+  );
+  position: relative;
+  cursor: pointer;
+}
+
+.pad:hover {
+  background: linear-gradient(140deg, #000000, #1e181e),
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.05), transparent);
+}
+
+.pad::before {
+  background-color: #ad7d7d;
+  box-shadow: 1px 1px 5px #e8615a;
+  bottom: 1px;
+  content: "";
+  position: absolute;
+  display: block;
+  height: 3px;
+  position: absolute;
+  right: -6px;
+  top: auto;
+  transform: rotate(-45deg);
+  width: 22.62742px;
+}

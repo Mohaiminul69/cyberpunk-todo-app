@@ -1,10 +1,10 @@
-import React from "react";
+import "./task-card.css";
 
 const TaskCard = ({ text, taskNumber }) => {
   return (
-    <div className="bg-[#0b0b0d] clipped-card p-2 rounded-md">
-      <div className="bg-[#e8615a] p-px card-shadow clipped-card rounded-md">
-        <div className="pad text-shadow--glow rounded-md p-2 pb-5">
+    <div className="card--wrapper clipped-card card-shadow">
+      <div className="card--border card-shadow clipped-card">
+        <div className="pad text-shadow--glow card">
           # {taskNumber} {text}
         </div>
       </div>
