@@ -1,5 +1,5 @@
 .card--wrapper {
-  background: #0b0b0d;
+  background: #000;
   padding: 8px;
   border-radius: 6px;
 }
@@ -12,7 +12,7 @@
 
 .card {
   border-radius: 6px;
-  padding: 4px 4px 20px 4px;
+  padding: 5px 5px 21px 5px;
 }
 
 .card-shadow {
@@ -55,12 +55,22 @@
     -2px 103%
   );
   position: relative;
-  cursor: pointer;
 }
 
-.pad:hover {
-  background: linear-gradient(140deg, #000000, #1e181e),
+/* .pad:hover {
+    background: linear-gradient(140deg, #000000, #1e181e),
     radial-gradient(circle at top left, rgba(255, 255, 255, 0.05), transparent);
+    } */
+
+.card--wrapper:hover {
+  cursor: pointer;
+  background: #0b0b0d;
+}
+
+.card--wrapper:hover .pad {
+  text-shadow: 0 0 20px currentcolor;
+  border: 2px solid #be2f2d;
+  padding: 4px 4px 20px 4px;
 }
 
 .pad::before {
