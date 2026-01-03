@@ -7,9 +7,9 @@ function App() {
     <div className="app-background">
       <Header />
       <div className="task-list--container">
-        <TaskList listTitle="My Tasks" />
-        <TaskList listTitle="Done" />
-        <TaskList listTitle="Canceled" />
+        <TaskList status="pending" listTitle="My Tasks" />
+        <TaskList status="completed" listTitle="Done" />
+        <TaskList status="canceled" listTitle="Canceled" />
       </div>
     </div>
   );
