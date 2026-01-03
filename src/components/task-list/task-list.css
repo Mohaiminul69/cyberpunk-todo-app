@@ -15,9 +15,8 @@
     0 0,
     100% 0,
     100% 100%,
-    0 100%,
-    0 93%,
-    0 68%,
+    6% 100%,
+    0 95%,
     0 65%,
     3% 60%,
     3% 31%,
@@ -42,6 +41,18 @@
 
 .list-wrapper:hover::after {
   background-color: rgba(254, 209, 63, 1);
+}
+
+.list-wrapper::before {
+  content: "";
+  position: absolute;
+  background-color: #fed33f;
+  bottom: 5px;
+  left: -10px;
+  width: 50px;
+  height: 4px;
+  transform: rotate(44deg);
+  z-index: 1;
 }
 
 .list-title-wrapper {
@@ -78,8 +89,12 @@
 }
 
 .list-container::-webkit-scrollbar-thumb {
-  background-color: #fed33f;
+  background-color: rgba(254, 209, 63, 0.6);
   border-radius: 10px;
+}
+
+.list-wrapper:hover .list-container::-webkit-scrollbar-thumb {
+  background-color: #fed33f;
 }
 
 .list-container::-webkit-scrollbar-track {
