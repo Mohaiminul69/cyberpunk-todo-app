@@ -31,7 +31,12 @@ const TaskList = ({ status }) => {
 
         <div className="list-container">
           {todoItems.map((item, index) => (
-            <TaskCard taskNumber={index + 1} key={index} text={item} />
+            <TaskCard
+              type={status}
+              taskNumber={index + 1}
+              key={index}
+              text={item}
+            />
           ))}
         </div>
       </div>

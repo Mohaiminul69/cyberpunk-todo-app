@@ -137,7 +137,7 @@
   padding: 12px 12px 24px 24px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   overflow-y: auto;
   height: 70vh;
   scroll-behavior: smooth;

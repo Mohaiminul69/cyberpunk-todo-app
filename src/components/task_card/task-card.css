@@ -5,9 +5,28 @@
 }
 
 .card--border {
-  background: #e8615a;
   border-radius: 6px;
   padding: 1px;
+}
+
+.card--pending {
+  color: rgba(254, 209, 63, 1);
+}
+.card--completed {
+  color: rgba(43, 228, 234, 1);
+}
+.card--canceled {
+  color: rgba(232, 97, 90, 1);
+}
+
+.card--pending .card--border {
+  background: rgba(254, 209, 63, 1);
+}
+.card--completed .card--border {
+  background: rgba(43, 228, 234, 1);
+}
+.card--canceled .card--border {
+  background: rgba(232, 97, 90, 1);
 }
 
 .card {
@@ -15,9 +34,9 @@
   padding: 5px 5px 21px 5px;
 }
 
-.card-shadow {
+/* .card-shadow {
   box-shadow: 0 0 6px rgba(156, 50, 48, 0.6), 0 0 12px rgba(156, 50, 48, 0.4);
-}
+} */
 
 .text-shadow--glow {
   text-shadow: -9px -6px 40px currentcolor;
@@ -43,7 +62,6 @@
 .pad {
   background-color: #1e181e;
   background-color: #000000;
-  border: 1px solid #9c3230;
   box-shadow: 0px 0px 150px 22px rgba(156, 50, 48, 0.4);
   -webkit-box-shadow: 0px 0px 150px 22px rgba(156, 50, 48, 0.4);
   -moz-box-shadow: 0px 0px 150px 22px rgba(156, 50, 48, 0.4);
@@ -55,6 +73,16 @@
     -2px 103%
   );
   position: relative;
+}
+.card--pending .pad {
+  border: 1px solid rgba(254, 209, 63, 1);
+}
+.card--completed .pad {
+  border: 1px solid rgba(43, 228, 234, 1);
+}
+.card--canceled .pad {
+  border: 1px solid rgba(232, 97, 90, 1);
+  border: 1px solid rgba(156, 50, 48, 1);
 }
 
 /* .pad:hover {
@@ -69,13 +97,26 @@
 
 .card--wrapper:hover .pad {
   text-shadow: 0 0 20px currentcolor;
-  border: 2px solid #be2f2d;
+  /* border: 2px solid rgb(190, 47, 45); */
   padding: 4px 4px 20px 4px;
+}
+
+/* .card--pending:hover border color */
+/* .card--pending:hover border color */
+/* .card--pending:hover border color */
+.card--pending:hover .pad {
+  border: 2px solid rgba(254, 209, 63, 1);
+}
+.card--completed:hover .pad {
+  border: 2px solid rgba(43, 228, 234, 1);
+}
+.card--canceled:hover .pad {
+  border: 2px solid rgba(232, 97, 90, 1);
+  border: 2px solid rgba(190, 47, 45, 1);
 }
 
 .pad::before {
   background-color: #ad7d7d;
-  box-shadow: 1px 1px 5px #e8615a;
   bottom: 1px;
   content: "";
   position: absolute;
@@ -86,4 +127,13 @@
   top: auto;
   transform: rotate(-45deg);
   width: 22.62742px;
+}
+.card--pending:hover .::before {
+  box-shadow: 1px 1px 5px rgba(254, 209, 63, 1);
+}
+.card--completed:hover .::before {
+  box-shadow: 1px 1px 5px rgba(43, 228, 234, 1);
+}
+.card--canceled:hover .::before {
+  box-shadow: 1px 1px 5px rgba(232, 97, 90, 1);
 }
