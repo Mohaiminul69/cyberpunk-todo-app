@@ -1,26 +1,15 @@
+import { useDroppable } from "@dnd-kit/core";
 import TaskCard from "../task_card/task_card";
 import "./task-list.css";
 
-const TaskList = ({ status }) => {
+const TaskList = ({ tasks, status }) => {
+  const { setNodeRef } = useDroppable({ id: status });
   const listTitle =
     status === "pending"
       ? "My Tasks"
       : status === "completed"
       ? "Done"
       : "Canceled";
-
-  const todoItems = [
-    "I have to make a todo list",
-    "Make the UI better and consistent with cyberpunk design or style",
-    "Add a delete button to each task card",
-    "Add a delete button to each task card",
-    "Add a delete button to each task card",
-    "Add a delete button to each task card",
-    "Add a delete button to each task card",
-    "Add a delete button to each task card",
-    "Add a delete button to each task card",
-    "Add a delete button to each task card",
-  ];
 
   return (
     <>
@@ -29,14 +18,9 @@ const TaskList = ({ status }) => {
           <p className="list-title">{listTitle}</p>
         </div>
 
-        <div className="list-container">
-          {todoItems.map((item, index) => (
-            <TaskCard
-              type={status}
-              taskNumber={index + 1}
-              key={index}
-              text={item}
-            />
+        <div ref={setNodeRef} className="list-container">
+          {tasks.map((task, index) => (
+            <TaskCard taskNumber={index + 1} key={task.id} task={task} />
           ))}
         </div>
       </div>
