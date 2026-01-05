@@ -1,6 +1,5 @@
 import Header from "./components/header/header";
 import TaskList from "./components/task-list/task-list";
-import taskList from "./utils/task-list";
 import { useState } from "react";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import TaskCard from "./components/task_card/task_card";
@@ -8,7 +7,11 @@ import "./App.css";
 
 function App() {
   const [activeTask, setActiveTask] = useState(null);
-  const [tasks, setTasks] = useState(taskList);
+  const [tasks, setTasks] = useState(() => {
+    const storedTasks = localStorage.getItem("tasks");
+    return storedTasks ? JSON.parse(storedTasks) : [];
+  });
+
   const taskLists = [
     { id: "pending", status: "pending", title: "My Tasks" },
     { id: "completed", status: "completed", title: "Done" },
@@ -27,11 +30,14 @@ function App() {
     const taskId = active.id;
     const newStatus = over.id;
 
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
+    setTasks((prevTasks) => {
+      const newList = prevTasks.map((task) =>
         task.id === taskId ? { ...task, status: newStatus } : task
-      )
-    );
+      );
+
+      localStorage.setItem("tasks", JSON.stringify(newList));
+      return newList;
+    });
   };
 
   return (
@@ -49,6 +55,7 @@ function App() {
               key={id}
               tasks={tasks.filter((task) => task.status === status)}
               status={status}
+              setTasks={setTasks}
             />
           ))}
         </DndContext>
