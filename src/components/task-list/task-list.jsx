@@ -38,7 +38,15 @@ const TaskList = ({ tasks, status, setTasks }) => {
         </div>
         <div ref={setNodeRef} className="list-container">
           {isPending && (
-            <input onKeyDown={handleKeyDown(setTasks)} type="text" />
+            <div className="card--wrapper clipped-card card-shadow">
+              <div className="card--border card-shadow clipped-card">
+                <textarea
+                  className="task-input pad text-shadow--glow card"
+                  onKeyDown={handleKeyDown(setTasks)}
+                  type="text"
+                />
+              </div>
+            </div>
           )}
           {tasks.map((task, index) => (
             <TaskCard taskNumber={index + 1} key={task.id} task={task} />
