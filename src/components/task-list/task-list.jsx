@@ -38,10 +38,11 @@ const TaskList = ({ tasks, status, setTasks }) => {
         </div>
         <div ref={setNodeRef} className="list-container">
           {isPending && (
-            <div className="card--wrapper clipped-card card-shadow">
-              <div className="card--border card-shadow clipped-card">
+            <div className="task-input--wrapper">
+              <div className="task-input--border">
                 <textarea
-                  className="task-input pad text-shadow--glow card"
+                  className="task-input"
+                  placeholder="Add new task..."
                   onKeyDown={handleKeyDown(setTasks)}
                   type="text"
                 />
