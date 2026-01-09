@@ -34,7 +34,10 @@ const TaskInput = ({ setTasks }) => {
 
       if (finalTranscript) {
         setText((prev) =>
-          prev ? prev + " " + finalTranscript.trim() : finalTranscript.trim()
+          prev
+            ? prev + " " + finalTranscript.trim()
+            : finalTranscript.trim().charAt(0).toUpperCase() +
+              finalTranscript.slice(1)
         );
       }
     };
