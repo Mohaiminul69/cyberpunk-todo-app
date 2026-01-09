@@ -56,6 +56,8 @@ const TaskInput = ({ setTasks }) => {
   };
 
   const handleKeyDown = (setTasks) => (event) => {
+    if (event.shiftKey) return;
+
     if (event.key === "Enter") {
       const newTask = {
         id: crypto.randomUUID(),
