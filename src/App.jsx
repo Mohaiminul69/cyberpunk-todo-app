@@ -13,9 +13,9 @@ function App() {
   });
 
   const taskLists = [
-    { id: "pending", status: "pending", title: "My Tasks" },
-    { id: "completed", status: "completed", title: "Done" },
-    { id: "canceled", status: "canceled", title: "Canceled" },
+    { id: "pending", status: "pending" },
+    { id: "completed", status: "completed" },
+    { id: "canceled", status: "canceled" },
   ];
 
   const handleDragStart = (event) => {
