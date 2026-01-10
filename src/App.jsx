@@ -41,6 +41,14 @@ function App() {
     };
 
     window.addEventListener("click", unlock2);
+
+    window.addEventListener("click", unlock);
+    window.addEventListener("keydown", unlock);
+
+    return () => {
+      window.removeEventListener("click", unlock);
+      window.removeEventListener("keydown", unlock);
+    };
   }, []);
 
   const handleDragStart = (event) => {
