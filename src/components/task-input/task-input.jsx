@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import microphoneOn from "../../assets/microphone-on.svg";
 import microphoneOff from "../../assets/microphone-off.svg";
+import { playHoverSound2 } from "../../utils/hover-sound-2";
 import "./task-input.css";
 
 const TaskInput = ({ setTasks }) => {
@@ -76,7 +77,7 @@ const TaskInput = ({ setTasks }) => {
   };
 
   return (
-    <div className="task-input--wrapper">
+    <div onMouseEnter={playHoverSound2} className="task-input--wrapper">
       <div className="task-input--border">
         <textarea
           value={text}
