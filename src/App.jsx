@@ -1,8 +1,10 @@
 import Header from "./components/header/header";
 import TaskList from "./components/task-list/task-list";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import TaskCard from "./components/task_card/task_card";
+import { hoverSound } from "./utils/hover-sound";
+import { hoverSound2 } from "./utils/hover-sound-2";
 import "./App.css";
 
 function App() {
@@ -17,6 +19,29 @@ function App() {
     { id: "completed", status: "completed" },
     { id: "canceled", status: "canceled" },
   ];
+
+  // Call once (e.g. App.jsx)
+  useEffect(() => {
+    const unlock = () => {
+      hoverSound.play().then(() => {
+        hoverSound.pause();
+        hoverSound.currentTime = 0;
+      });
+      window.removeEventListener("click", unlock);
+    };
+
+    window.addEventListener("click", unlock);
+
+    const unlock2 = () => {
+      hoverSound2.play().then(() => {
+        hoverSound2.pause();
+        hoverSound2.currentTime = 0;
+      });
+      window.removeEventListener("click", unlock2);
+    };
+
+    window.addEventListener("click", unlock2);
+  }, []);
 
   const handleDragStart = (event) => {
     setActiveTask(tasks.find((task) => task.id === event.active.id));

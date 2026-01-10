@@ -1,4 +1,5 @@
 import { useDraggable } from "@dnd-kit/core";
+import { playHoverSound } from "../../utils/hover-sound";
 import "./task-card.css";
 
 const TaskCard = ({ task, taskNumber }) => {
@@ -16,6 +17,7 @@ const TaskCard = ({ task, taskNumber }) => {
       ref={setNodeRef}
       {...listeners}
       {...attributes}
+      onMouseEnter={playHoverSound}
       className={`card--${task.status} card--wrapper clipped-card card-shadow`}
     >
       <div className="card--border card-shadow clipped-card">

@@ -1,6 +1,7 @@
 import { useDroppable } from "@dnd-kit/core";
 import TaskCard from "../task_card/task_card";
 import TaskInput from "../task-input/task-input";
+import { playHoverSound2 } from "../../utils/hover-sound-2";
 import "./task-list.css";
 
 const TaskList = ({ tasks, status, setTasks }) => {
@@ -14,19 +15,20 @@ const TaskList = ({ tasks, status, setTasks }) => {
       : "Canceled";
 
   return (
-    <>
-      <div className={`list-wrapper wrapper-type--${status}`}>
-        <div className="list-title-wrapper">
-          <p className="list-title">{listTitle}</p>
-        </div>
-        <div ref={setNodeRef} className="list-container">
-          {isPending && <TaskInput setTasks={setTasks} />}
-          {tasks.map((task, index) => (
-            <TaskCard taskNumber={index + 1} key={task.id} task={task} />
-          ))}
-        </div>
+    <div
+      onMouseEnter={playHoverSound2}
+      className={`list-wrapper wrapper-type--${status}`}
+    >
+      <div className="list-title-wrapper">
+        <p className="list-title">{listTitle}</p>
       </div>
-    </>
+      <div ref={setNodeRef} className="list-container">
+        {isPending && <TaskInput setTasks={setTasks} />}
+        {tasks.map((task, index) => (
+          <TaskCard taskNumber={index + 1} key={task.id} task={task} />
+        ))}
+      </div>
+    </div>
   );
 };
 
