@@ -1,5 +1,5 @@
 // hoverSound.js
-export const hoverSound2 = new Audio("/public/sounds/hover-sound-2.mp3");
+export const hoverSound2 = new Audio("/sounds/hover-sound-2.mp3");
 
 hoverSound2.volume = 0.25;
 hoverSound2.preload = "auto";
