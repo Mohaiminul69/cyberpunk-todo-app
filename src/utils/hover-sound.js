@@ -5,7 +5,6 @@ hoverSound.volume = 0.25;
 hoverSound.preload = "auto";
 
 export const playHoverSound = () => {
-  console.log("AUDIO SRC:", hoverSound.src);
   hoverSound.currentTime = 0;
   hoverSound.play().catch((err) => {
     console.log("err", err);
