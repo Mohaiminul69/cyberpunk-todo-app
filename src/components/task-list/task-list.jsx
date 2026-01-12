@@ -25,7 +25,12 @@ const TaskList = ({ tasks, status, setTasks }) => {
       <div ref={setNodeRef} className="list-container">
         {isPending && <TaskInput setTasks={setTasks} />}
         {tasks.map((task, index) => (
-          <TaskCard taskNumber={index + 1} key={task.id} task={task} />
+          <TaskCard
+            setTasks={setTasks}
+            taskNumber={index + 1}
+            key={task.id}
+            task={task}
+          />
         ))}
       </div>
     </div>

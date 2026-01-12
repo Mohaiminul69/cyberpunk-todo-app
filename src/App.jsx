@@ -1,7 +1,13 @@
 import Header from "./components/header/header";
 import TaskList from "./components/task-list/task-list";
 import { useEffect, useState } from "react";
-import { DndContext, DragOverlay } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import TaskCard from "./components/task_card/task_card";
 import { hoverSound } from "./utils/hover-sound";
 import { hoverSound2 } from "./utils/hover-sound-2";
@@ -13,6 +19,14 @@ function App() {
     const storedTasks = localStorage.getItem("tasks");
     return storedTasks ? JSON.parse(storedTasks) : [];
   });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    })
+  );
 
   const taskLists = [
     { id: "pending", status: "pending" },
@@ -77,7 +91,11 @@ function App() {
     <div className="app-background">
       <Header />
       <div className="task-list--container">
-        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <DndContext
+          sensors={sensors}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
           <DragOverlay>
             {activeTask ? (
               <TaskCard task={activeTask} taskNumber={activeTask.number} />
