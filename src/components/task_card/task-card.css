@@ -72,6 +72,7 @@
     calc(100% - 1rem + -8px) 103%,
     -2px 103%
   );
+  word-wrap: break-word;
   position: relative;
 }
 .card--pending .pad {
