@@ -24,7 +24,7 @@ const TaskCard = ({ task, taskNumber, setTasks }) => {
       className={`card--${task.status} card--wrapper clipped-card card-shadow`}
     >
       <div
-        style={{ opacity: isDragging ? 0.5 : 1 }}
+        style={{ opacity: isDragging ? 0.2 : 1 }}
         className="card--border card-shadow clipped-card"
       >
         <div className="pad text-shadow--glow card">
