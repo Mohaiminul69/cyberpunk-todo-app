@@ -85,7 +85,7 @@ const TaskCard = ({
             onClick={handleToggleDone}
             aria-label={task.done ? "Mark as not done" : "Mark as done"}
             aria-pressed={task.done}
-            className={`grid size-4 shrink-0 cursor-pointer place-items-center transition-colors duration-120 ease-out ${
+            className={`grid size-4.5 shrink-0 cursor-pointer place-items-center transition-colors md:size-4 duration-120 ease-out ${
               task.done
                 ? "bg-(--col) text-hud-bg"
                 : "border-2 border-hud-idle hover:border-(--col)"
@@ -99,7 +99,7 @@ const TaskCard = ({
           <button
             onClick={() => deleteTask(task.id)}
             aria-label="Delete task"
-            className="ml-auto grid size-5 cursor-pointer place-items-center text-hud-muted-2 opacity-0 transition group-hover:opacity-100 hover:text-hud-accent-on-dark focus-visible:opacity-100"
+            className="ml-auto grid size-6 cursor-pointer place-items-center text-hud-muted-2 transition hover:text-hud-accent-on-dark md:size-5 md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
           >
             <TrashIcon size={13} />
           </button>
@@ -120,14 +120,14 @@ const TaskCard = ({
                 }
               }}
               onChange={(e) => updateTask(task.id, e.target.value)}
-              className="block min-h-11 w-full resize-none bg-transparent pr-7 text-sm leading-[1.45] text-hud-ink-2 caret-hud-accent outline-none field-sizing-content placeholder:text-hud-muted-2"
+              className="block min-h-11 w-full resize-none bg-transparent pr-7 text-base leading-[1.45] text-hud-ink-2 caret-hud-accent outline-none field-sizing-content md:text-sm placeholder:text-hud-muted-2"
             ></textarea>
             <MicrophoneButton onTranscript={appendTranscript} />
           </div>
         ) : (
           <p
             onClick={() => setEditMode(true)}
-            className={`cursor-text text-sm leading-[1.45] break-words whitespace-pre-wrap text-pretty ${
+            className={`cursor-text text-[15px] leading-[1.45] md:text-sm break-words whitespace-pre-wrap text-pretty ${
               task.done
                 ? "text-hud-muted-2 line-through decoration-(--col)"
                 : "text-hud-ink-2"

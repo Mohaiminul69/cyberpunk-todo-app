@@ -32,7 +32,7 @@ function App() {
   };
 
   return (
-    <div className="app-background flex h-screen flex-col overflow-hidden px-10 font-archivo">
+    <div className="app-background flex h-dvh flex-col overflow-hidden px-5 font-archivo md:px-10">
       <Header game={game} />
       <KanbanBoard
         dailyCompleted={getDailyCompleted(game)}

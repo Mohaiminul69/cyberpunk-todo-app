@@ -1,13 +1,14 @@
-const TrophyIcon = () => {
+const TrophyIcon = ({ size = 22 }: { size?: number }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={2}
       stroke="currentColor"
       strokeLinecap="square"
-      className="size-5.5"
     >
       <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
       <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />

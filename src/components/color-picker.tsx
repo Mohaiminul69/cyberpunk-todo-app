@@ -1,4 +1,11 @@
-import { useEffect, useRef, useState, type RefObject } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type RefObject,
+} from "react";
+import { createPortal } from "react-dom";
 import { COLUMN_COLOR_PRESETS } from "../game";
 import { contrastRatio, normalizeHex } from "../utils/color";
 import CheckIcon from "../icons/check-icon";
@@ -13,13 +20,22 @@ interface Props {
   onCancel: () => void;
   /** The trigger button, so clicking it isn't treated as an outside click */
   triggerRef: RefObject<HTMLElement | null>;
+  /** "sheet" is the mobile bottom sheet */
+  variant?: "popover" | "sheet";
 }
 
 /**
  * Column color popover: 8 presets plus a custom hex field. Choices preview live
  * on the column; Apply keeps them, Cancel / Esc / clicking outside reverts.
  */
-const ColorPicker = ({ value, onPreview, onApply, onCancel, triggerRef }: Props) => {
+const ColorPicker = ({
+  value,
+  onPreview,
+  onApply,
+  onCancel,
+  triggerRef,
+  variant = "popover",
+}: Props) => {
   const ref = useRef<HTMLDivElement>(null);
   const [customText, setCustomText] = useState(() =>
     value.startsWith("#") ? value.toUpperCase() : "",
@@ -67,12 +83,18 @@ const ColorPicker = ({ value, onPreview, onApply, onCancel, triggerRef }: Props)
     if (!customInvalid) onApply(value);
   };
 
-  return (
+  const panel = (
     <div
       ref={ref}
       role="dialog"
       aria-label="Column color"
-      className="absolute top-13 right-3 z-10 flex w-66 flex-col gap-3.5 border-2 border-hud-line-strong bg-hud-panel-raised p-4 shadow-[0_12px_32px_rgba(0,0,0,.6)]"
+      className={
+        variant === "sheet"
+          ? "sheet-up fixed inset-x-0 bottom-0 z-50 flex flex-col gap-3.5 border-t-2 border-hud-line-strong bg-hud-panel-raised p-5 pb-[calc(20px+env(safe-area-inset-bottom))] font-archivo text-hud-ink shadow-[0_-12px_32px_rgba(0,0,0,.6)]"
+          : "absolute top-13 right-3 z-10 flex w-66 flex-col gap-3.5 border-2 border-hud-line-strong bg-hud-panel-raised p-4 shadow-[0_12px_32px_rgba(0,0,0,.6)]"
+      }
+      // A portalled sheet sits outside the column, so it needs the color itself
+      style={variant === "sheet" ? ({ "--col": value } as CSSProperties) : undefined}
     >
       <div className="flex items-center justify-between">
         <span className="text-[10px] font-extrabold tracking-[.16em] text-hud-muted">
@@ -94,7 +116,7 @@ const ColorPicker = ({ value, onPreview, onApply, onCancel, triggerRef }: Props)
               aria-label={preset.name}
               aria-pressed={selected}
               onClick={() => choosePreset(preset.value)}
-              className={`grid h-10 cursor-pointer place-items-center text-hud-bg ${
+              className={`grid h-11 cursor-pointer place-items-center text-hud-bg md:h-10 ${
                 selected
                   ? "shadow-[0_0_0_2px_#1d1b1b,0_0_0_4px_#f3f2f2]"
                   : "hover:shadow-[0_0_0_2px_#1d1b1b,0_0_0_4px_#605d5d]"
@@ -115,7 +137,7 @@ const ColorPicker = ({ value, onPreview, onApply, onCancel, triggerRef }: Props)
           CUSTOM
         </label>
         <div className="flex gap-0.5">
-          <div className="h-9 w-10 flex-none bg-(--col)" />
+          <div className="h-11 w-11 flex-none bg-(--col) md:h-9 md:w-10" />
           <input
             id="column-color-custom"
             value={customText}
@@ -126,7 +148,7 @@ const ColorPicker = ({ value, onPreview, onApply, onCancel, triggerRef }: Props)
             placeholder="#RRGGBB"
             spellCheck={false}
             aria-invalid={customInvalid}
-            className={`h-9 min-w-0 flex-1 border bg-hud-card px-2.5 text-[13px] font-semibold tracking-[.06em] text-hud-ink uppercase tabular-nums caret-hud-accent outline-none placeholder:text-hud-idle ${
+            className={`h-11 min-w-0 flex-1 border md:h-9 bg-hud-card px-2.5 text-base font-semibold md:text-[13px] tracking-[.06em] text-hud-ink uppercase tabular-nums caret-hud-accent outline-none placeholder:text-hud-idle ${
               customInvalid ? "border-hud-accent-on-dark" : "border-hud-line-strong focus:border-hud-muted"
             }`}
           />
@@ -148,19 +170,30 @@ const ColorPicker = ({ value, onPreview, onApply, onCancel, triggerRef }: Props)
           type="button"
           onClick={apply}
           disabled={customInvalid}
-          className="flex h-9 flex-1 cursor-pointer items-center bg-hud-accent px-3 text-xs font-extrabold tracking-[.12em] text-hud-ink hover:bg-hud-accent-on-dark disabled:cursor-not-allowed disabled:opacity-45"
+          className="flex h-11 flex-1 cursor-pointer items-center md:h-9 bg-hud-accent px-3 text-xs font-extrabold tracking-[.12em] text-hud-ink hover:bg-hud-accent-on-dark disabled:cursor-not-allowed disabled:opacity-45"
         >
           APPLY
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="flex h-9 flex-1 cursor-pointer items-center border border-hud-line-strong px-3 text-xs font-extrabold tracking-[.12em] text-hud-ink-3 hover:bg-hud-hover-fill"
+          className="flex h-11 flex-1 cursor-pointer items-center md:h-9 border border-hud-line-strong px-3 text-xs font-extrabold tracking-[.12em] text-hud-ink-3 hover:bg-hud-hover-fill"
         >
           CANCEL
         </button>
       </div>
     </div>
+  );
+
+  if (variant === "popover") return panel;
+
+  // Mobile: bottom sheet over a dimmed backdrop (a backdrop tap counts as outside)
+  return createPortal(
+    <>
+      <div className="fixed inset-0 z-50 bg-hud-line/50" />
+      {panel}
+    </>,
+    document.body,
   );
 };
 

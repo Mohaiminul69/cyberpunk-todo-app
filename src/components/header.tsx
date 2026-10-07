@@ -43,7 +43,62 @@ const Header = ({ game }: Props) => {
 
   return (
     <>
-      <header className="flex flex-wrap items-center gap-x-10 gap-y-4 py-5.5 font-archivo">
+      {/* Mobile header: logo row, 3-cell stats strip */}
+      <header className="shrink-0 md:hidden">
+        <div className="flex items-center gap-2.5 pt-4 pb-3.5">
+          <div className="h-6.5 w-2.5 -skew-x-14 bg-hud-accent" />
+          <div className="text-[26px] leading-none font-black font-stretch-125% italic">
+            TODO
+          </div>
+          <div className="ml-auto text-right text-[10px] leading-[1.3] font-bold tracking-[.12em] text-hud-accent-on-dark">
+            {daysLeft} DAYS LEFT
+            <br />
+            OF THIS YEAR
+          </div>
+        </div>
+        <div className="grid grid-cols-[1fr_auto_auto] gap-0.5">
+          <div className="flex items-center gap-2.5 bg-hud-panel-raised px-3 py-2.5">
+            <span
+              aria-label={`Level ${player.level}`}
+              className="text-[22px] leading-none font-black font-stretch-125% tabular-nums"
+            >
+              {player.level}
+            </span>
+            <div className="flex flex-1 flex-col gap-1.25">
+              <span className="text-[10px] font-semibold tracking-[.08em] text-hud-muted tabular-nums">
+                {formatNumber(player.xp)} / {formatNumber(xpNeeded)} XP
+              </span>
+              <div className="relative h-1.5 bg-hud-line">
+                <div
+                  className="absolute inset-y-0 left-0 bg-hud-accent transition-[width] duration-600 ease-[cubic-bezier(.2,.8,.2,1)]"
+                  style={{ width: `${xpPercent}%` }}
+                />
+              </div>
+            </div>
+          </div>
+          <div
+            aria-label={`${player.streak} day streak`}
+            className="flex items-center gap-1.5 bg-hud-panel-raised px-3 py-2.5"
+          >
+            <span className="text-hud-amber">
+              <FlameIcon size={16} />
+            </span>
+            <span className="text-base font-black tabular-nums">{player.streak}</span>
+          </div>
+          <div
+            aria-label={`${player.achievementsUnlocked} of ${ACHIEVEMENT_COUNT} achievements`}
+            className="flex items-center gap-1.5 bg-hud-panel-raised px-3 py-2.5"
+          >
+            <TrophyIcon size={16} />
+            <span className="text-base font-black tabular-nums">
+              {player.achievementsUnlocked}
+            </span>
+          </div>
+        </div>
+        <div className="mt-3.5 h-0.5 bg-hud-accent shadow-[0_0_14px_rgba(236,48,19,.55)]" />
+      </header>
+
+      <header className="hidden flex-wrap items-center gap-x-10 gap-y-4 py-5.5 md:flex">
         {/* Logo */}
         <div className="flex items-center gap-3">
           <div className="h-8.5 w-3.5 -skew-x-14 bg-hud-accent" />
@@ -129,7 +184,7 @@ const Header = ({ game }: Props) => {
       </header>
 
       {/* Header rule */}
-      <div className="h-0.5 shrink-0 bg-hud-accent shadow-[0_0_18px_rgba(236,48,19,.55)]" />
+      <div className="hidden h-0.5 shrink-0 bg-hud-accent md:block shadow-[0_0_18px_rgba(236,48,19,.55)]" />
     </>
   );
 };

@@ -29,6 +29,8 @@ html,
 body,
 #root {
   @apply bg-hud-bg text-hud-ink box-border;
+  /* Stops the browser's swipe-to-go-back, which would hijack swiping between columns */
+  overscroll-behavior: none;
 }
 
 /* HUD background: 1px grid, 40px cells (32px on mobile) */
@@ -89,6 +91,12 @@ body,
   );
 }
 
+@media (max-width: 767px) {
+  .quest-card {
+    padding: 14px;
+  }
+}
+
 .quest-card-done {
   box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--col) 50%, transparent);
 }
@@ -147,11 +155,23 @@ body,
   }
 }
 
+/* Mobile color sheet */
+.sheet-up {
+  animation: sheet-up 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes sheet-up {
+  from {
+    translate: 0 100%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .quest-card-flash,
   .check-pop,
   .xp-float,
-  .level-up-banner {
+  .level-up-banner,
+  .sheet-up {
     animation: none;
   }
 }

@@ -19,6 +19,8 @@ import BoardMeta from "./board-meta";
 import ScrollTrack from "./scroll-track";
 import ConfirmDialog from "./confirm-dialog";
 import { COLUMN_COLORS, RARITIES } from "../game";
+import { useIsMobile } from "../hooks/use-media-query";
+import MobileBoard from "./mobile-board";
 
 interface Props {
   dailyCompleted: number;
@@ -47,11 +49,19 @@ const KanbanBoard = ({
     [columns],
   );
 
+  const isMobile = useIsMobile();
+  // Mobile shows one column; fall back to the first if none is picked (or it was deleted)
+  const [mobileColumnId, setMobileColumnId] = useState<Id | null>(null);
+  const activeMobileColumnId = columns.some((col) => col.id === mobileColumnId)
+    ? mobileColumnId
+    : (columns[0]?.id ?? null);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 3,
-      },
+      // On touch, press and hold to drag so scrolling and swiping still work
+      activationConstraint: isMobile
+        ? { delay: 250, tolerance: 5 }
+        : { distance: 3 },
     }),
   );
 
@@ -73,6 +83,7 @@ const KanbanBoard = ({
       color: COLUMN_COLORS[columns.length % COLUMN_COLORS.length],
     };
     setColumns((prevColumns) => [...prevColumns, columnToAdd]);
+    setMobileColumnId(columnToAdd.id);
   };
 
   // Earned XP is kept when a column and its tasks are deleted
@@ -234,6 +245,80 @@ const KanbanBoard = ({
     ? tasks.filter((task) => task.columnId === columnToDelete.id).length
     : 0;
 
+  const dragOverlay = createPortal(
+    <DragOverlay>
+      {activeColumn && (
+        <ColumnContainer
+          column={activeColumn}
+          {...columnProps}
+          tasks={tasks.filter((task) => task.columnId === activeColumn.id)}
+        />
+      )}
+      {draggedTask && (
+        // The overlay is portalled outside its column, so pass the color explicitly
+        <div
+          className="font-archivo"
+          style={
+            {
+              "--col": columns.find((col) => col.id === draggedTask.columnId)
+                ?.color,
+            } as CSSProperties
+          }
+        >
+          <TaskCard
+            task={draggedTask}
+            taskNumber={
+              tasks
+                .filter((task) => task.columnId === draggedTask.columnId)
+                .findIndex((task) => task.id === draggedTask.id) + 1
+            }
+            deleteTask={deleteTask}
+            updateTask={updateTask}
+            toggleTaskDone={toggleTaskDone}
+          />
+        </div>
+      )}
+    </DragOverlay>,
+    document.body,
+  );
+
+  const deleteDialog = columnToDelete && (
+    <ConfirmDialog
+      title="Delete column?"
+      body={`Delete ${columnToDelete.title.toUpperCase()} and its ${tasksToDelete} ${
+        tasksToDelete === 1 ? "task" : "tasks"
+      }? Earned XP is kept.`}
+      confirmLabel="Delete"
+      onConfirm={() => {
+        deleteColumn(columnToDelete.id);
+        setColumnToDelete(null);
+      }}
+      onCancel={() => setColumnToDelete(null)}
+    />
+  );
+
+  if (isMobile) {
+    return (
+      <DndContext
+        sensors={sensors}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        onDragOver={onDragOver}
+      >
+        <MobileBoard
+          columns={columns}
+          tasks={tasks}
+          activeColumnId={activeMobileColumnId}
+          setActiveColumnId={setMobileColumnId}
+          createColumn={createColumn}
+          columnProps={columnProps}
+        />
+        {dragOverlay}
+        {deleteDialog}
+      </DndContext>
+    );
+  }
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <BoardMeta
@@ -271,64 +356,13 @@ const KanbanBoard = ({
               NEW COLUMN
             </button>
           </div>
-          {createPortal(
-            <DragOverlay>
-              {activeColumn && (
-                <ColumnContainer
-                  column={activeColumn}
-                  {...columnProps}
-                  tasks={tasks.filter(
-                    (task) => task.columnId === activeColumn.id,
-                  )}
-                />
-              )}
-              {draggedTask && (
-                // The overlay is portalled outside its column, so pass the color explicitly
-                <div
-                  className="font-archivo"
-                  style={
-                    {
-                      "--col": columns.find(
-                        (col) => col.id === draggedTask.columnId,
-                      )?.color,
-                    } as CSSProperties
-                  }
-                >
-                  <TaskCard
-                    task={draggedTask}
-                    taskNumber={
-                      tasks
-                        .filter((task) => task.columnId === draggedTask.columnId)
-                        .findIndex((task) => task.id === draggedTask.id) + 1
-                    }
-                    deleteTask={deleteTask}
-                    updateTask={updateTask}
-                    toggleTaskDone={toggleTaskDone}
-                  />
-                </div>
-              )}
-            </DragOverlay>,
-            document.body,
-          )}
+          {dragOverlay}
         </DndContext>
       </div>
 
       <ScrollTrack scrollRef={scrollRef} />
 
-      {columnToDelete && (
-        <ConfirmDialog
-          title="Delete column?"
-          body={`Delete ${columnToDelete.title.toUpperCase()} and its ${tasksToDelete} ${
-            tasksToDelete === 1 ? "task" : "tasks"
-          }? Earned XP is kept.`}
-          confirmLabel="Delete"
-          onConfirm={() => {
-            deleteColumn(columnToDelete.id);
-            setColumnToDelete(null);
-          }}
-          onCancel={() => setColumnToDelete(null)}
-        />
-      )}
+      {deleteDialog}
     </div>
   );
 };

@@ -53,7 +53,7 @@ const TaskForm = ({ onSubmit, onCancel }: Props) => {
               submit();
             }
           }}
-          className="block min-h-11 w-full resize-none border-b border-hud-line bg-transparent pr-7 pb-2 text-sm leading-[1.45] text-hud-ink-2 caret-hud-accent outline-none field-sizing-content placeholder:text-hud-muted-2 focus:border-(--col)"
+          className="block min-h-11 w-full resize-none border-b border-hud-line bg-transparent pr-7 pb-2 text-base leading-[1.45] text-hud-ink-2 md:text-sm caret-hud-accent outline-none field-sizing-content placeholder:text-hud-muted-2 focus:border-(--col)"
         />
         <MicrophoneButton onTranscript={appendTranscript} />
       </div>

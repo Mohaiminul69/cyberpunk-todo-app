@@ -4,6 +4,7 @@ import type { Column, Id, Rarity, Task } from "../types";
 import { CSS } from "@dnd-kit/utilities";
 import {
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -25,6 +26,11 @@ interface Props {
   deleteTask: (id: Id) => void;
   toggleTaskDone: (id: Id) => void;
   tasks: Task[];
+  /** "mobile" is the single active column under the tabs */
+  variant?: "desktop" | "mobile";
+  /** Mobile opens the add-task form from the footer button, so it controls this */
+  adding?: boolean;
+  onAddingChange?: (adding: boolean) => void;
 }
 
 const ColumnContainer = ({
@@ -37,12 +43,19 @@ const ColumnContainer = ({
   deleteTask,
   updateTask,
   toggleTaskDone,
+  variant = "desktop",
+  adding: addingProp,
+  onAddingChange,
 }: Props) => {
+  const isMobile = variant === "mobile";
   const [editMode, setEditMode] = useState(false);
-  const [adding, setAdding] = useState(false);
+  const [addingState, setAddingState] = useState(false);
+  const adding = addingProp ?? addingState;
+  const setAdding = onAddingChange ?? setAddingState;
   const [pickerOpen, setPickerOpen] = useState(false);
   const [previewColor, setPreviewColor] = useState<string | null>(null);
   const colorTriggerRef = useRef<HTMLButtonElement>(null);
+  const formRef = useRef<HTMLDivElement>(null);
   const {
     attributes,
     listeners,
@@ -56,7 +69,8 @@ const ColumnContainer = ({
       type: "column",
       column,
     },
-    disabled: editMode || pickerOpen,
+    // Columns can't be reordered on mobile: only one is visible at a time
+    disabled: editMode || pickerOpen || isMobile,
   });
 
   const taskIds = useMemo(() => tasks.map((task) => task.id), [tasks]);
@@ -68,6 +82,11 @@ const ColumnContainer = ({
     setPickerOpen(false);
     setPreviewColor(null);
   }, []);
+
+  // The footer button opens the form at the end of a possibly long list
+  useEffect(() => {
+    if (adding && isMobile) formRef.current?.scrollIntoView({ block: "nearest" });
+  }, [adding, isMobile]);
 
   const style = {
     transition,
@@ -81,6 +100,133 @@ const ColumnContainer = ({
   if (isDragging) {
     return (
       <div ref={setNodeRef} style={style} className={`${columnClass} opacity-40`} />
+    );
+  }
+
+  const titleClass = isMobile
+    ? "text-xl font-extrabold font-stretch-118% tracking-[.04em] uppercase"
+    : "text-base font-extrabold font-stretch-118% tracking-[.06em] uppercase";
+
+  const title = editMode ? (
+    <input
+      className={`min-w-0 flex-1 border-b-2 border-(--col) bg-transparent caret-hud-accent outline-none ${titleClass}`}
+      value={column.title}
+      onChange={(e) => updateColumn(column.id, e.target.value)}
+      autoFocus
+      onBlur={() => setEditMode(false)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === "Escape") setEditMode(false);
+      }}
+    />
+  ) : (
+    <div
+      onClick={() => setEditMode(true)}
+      title="Click to rename"
+      className={`min-w-0 cursor-text truncate ${isMobile ? "" : "flex-1"} ${titleClass}`}
+    >
+      {column.title}
+    </div>
+  );
+
+  const clearedLabel = (
+    <span
+      className={`shrink-0 text-[10px] font-bold tracking-[.12em] tabular-nums ${
+        cleared > 0 ? "text-(--col)" : "text-hud-muted-2"
+      }`}
+    >
+      {cleared}/{tasks.length} CLEARED
+    </span>
+  );
+
+  const actions = (
+    <div className={`flex shrink-0 ${isMobile ? "ml-auto" : ""}`}>
+      <button
+        ref={colorTriggerRef}
+        onClick={() => (pickerOpen ? closePicker() : setPickerOpen(true))}
+        onMouseEnter={playHoverSound}
+        title="Change column color"
+        aria-label="Change column color"
+        aria-expanded={pickerOpen}
+        className={`grid cursor-pointer place-items-center transition-colors hover:bg-hud-line ${
+          isMobile ? "size-11" : "size-8"
+        } ${pickerOpen ? "bg-hud-line" : ""}`}
+      >
+        <span
+          className={`bg-(--col) shadow-[0_0_0_2px_#141212,0_0_0_3px_#605d5d] ${
+            isMobile ? "size-4" : "size-3.5"
+          }`}
+        />
+      </button>
+      <button
+        onClick={() => requestDeleteColumn(column)}
+        onMouseEnter={playHoverSound}
+        aria-label={`Delete ${column.title}`}
+        className={`grid cursor-pointer place-items-center text-hud-muted-2 transition-colors hover:bg-hud-line hover:text-hud-accent-on-dark ${
+          isMobile ? "size-11" : "size-8"
+        }`}
+      >
+        <TrashIcon size={isMobile ? 18 : 17} />
+      </button>
+    </div>
+  );
+
+  const picker = pickerOpen && (
+    <ColorPicker
+      value={displayColor}
+      variant={isMobile ? "sheet" : "popover"}
+      triggerRef={colorTriggerRef}
+      onPreview={setPreviewColor}
+      onApply={(color) => {
+        updateColumnColor(column.id, color);
+        closePicker();
+      }}
+      onCancel={closePicker}
+    />
+  );
+
+  const taskList = (
+    <>
+      <SortableContext items={taskIds}>
+        {tasks.map((task, index) => (
+          <TaskCard
+            updateTask={updateTask}
+            key={task.id}
+            task={task}
+            taskNumber={index + 1}
+            deleteTask={deleteTask}
+            toggleTaskDone={toggleTaskDone}
+          />
+        ))}
+      </SortableContext>
+      {adding && (
+        <div ref={formRef}>
+          <TaskForm
+            onSubmit={(content, rarity) => createTask(column.id, content, rarity)}
+            onCancel={() => setAdding(false)}
+          />
+        </div>
+      )}
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <div ref={setNodeRef} style={style} className="flex min-h-0 flex-1 flex-col">
+        <div className="flex items-center gap-2.5 pt-1 pb-3">
+          {title}
+          {!editMode && clearedLabel}
+          {actions}
+        </div>
+        {picker}
+        <div className="quest-list flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto pb-4">
+          {taskList}
+          {tasks.length === 0 && !adding && (
+            <p className="py-10 text-center text-xs font-bold tracking-[.12em] text-hud-muted-2">
+              NO QUESTS YET
+            </p>
+          )}
+        </div>
+      </div>
     );
   }
 
@@ -99,63 +245,11 @@ const ColumnContainer = ({
         <div className="grid size-7 shrink-0 place-items-center border-2 border-(--col) text-[13px] font-extrabold text-(--col) tabular-nums">
           {tasks.length}
         </div>
-        {editMode ? (
-          <input
-            className="min-w-0 flex-1 border-b-2 border-(--col) bg-transparent text-base font-extrabold font-stretch-118% tracking-[.06em] uppercase caret-hud-accent outline-none"
-            value={column.title}
-            onChange={(e) => updateColumn(column.id, e.target.value)}
-            autoFocus
-            onBlur={() => setEditMode(false)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === "Escape") setEditMode(false);
-            }}
-          />
-        ) : (
-          <div
-            onClick={() => setEditMode(true)}
-            title="Click to rename"
-            className="min-w-0 flex-1 cursor-text truncate text-base font-extrabold font-stretch-118% tracking-[.06em] uppercase"
-          >
-            {column.title}
-          </div>
-        )}
-        <div className="flex shrink-0">
-          <button
-            ref={colorTriggerRef}
-            onClick={() => (pickerOpen ? closePicker() : setPickerOpen(true))}
-            onMouseEnter={playHoverSound}
-            title="Change column color"
-            aria-label="Change column color"
-            aria-expanded={pickerOpen}
-            className={`grid size-8 cursor-pointer place-items-center transition-colors hover:bg-hud-line ${
-              pickerOpen ? "bg-hud-line" : ""
-            }`}
-          >
-            <span className="size-3.5 bg-(--col) shadow-[0_0_0_2px_#141212,0_0_0_3px_#605d5d]" />
-          </button>
-          <button
-            onClick={() => requestDeleteColumn(column)}
-            onMouseEnter={playHoverSound}
-            aria-label={`Delete ${column.title}`}
-            className="grid size-8 cursor-pointer place-items-center text-hud-muted-2 transition-colors hover:bg-hud-line hover:text-hud-accent-on-dark"
-          >
-            <TrashIcon />
-          </button>
-        </div>
+        {title}
+        {actions}
       </div>
 
-      {pickerOpen && (
-        <ColorPicker
-          value={displayColor}
-          triggerRef={colorTriggerRef}
-          onPreview={setPreviewColor}
-          onApply={(color) => {
-            updateColumnColor(column.id, color);
-            closePicker();
-          }}
-          onCancel={closePicker}
-        />
-      )}
+      {picker}
 
       <div className="flex items-center gap-2.5 border-b-2 border-hud-line px-4 pb-3.5">
         <div className="relative h-0.75 flex-1 bg-hud-line">
@@ -164,34 +258,12 @@ const ColumnContainer = ({
             style={{ width: tasks.length ? `${(cleared / tasks.length) * 100}%` : 0 }}
           />
         </div>
-        <span
-          className={`text-[10px] font-bold tracking-[.12em] tabular-nums ${
-            cleared > 0 ? "text-(--col)" : "text-hud-muted-2"
-          }`}
-        >
-          {cleared}/{tasks.length} CLEARED
-        </span>
+        {clearedLabel}
       </div>
 
       <div className="quest-list flex min-h-0 flex-col gap-2.5 overflow-y-auto px-4 py-3.5">
-        <SortableContext items={taskIds}>
-          {tasks.map((task, index) => (
-            <TaskCard
-              updateTask={updateTask}
-              key={task.id}
-              task={task}
-              taskNumber={index + 1}
-              deleteTask={deleteTask}
-              toggleTaskDone={toggleTaskDone}
-            />
-          ))}
-        </SortableContext>
-        {adding ? (
-          <TaskForm
-            onSubmit={(content, rarity) => createTask(column.id, content, rarity)}
-            onCancel={() => setAdding(false)}
-          />
-        ) : (
+        {taskList}
+        {!adding && (
           <button
             onClick={() => setAdding(true)}
             onMouseEnter={playHoverSound}
