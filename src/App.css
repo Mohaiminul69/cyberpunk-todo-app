@@ -1,20 +1,157 @@
-.app-background {
-  background-color: #191a1e;
-  background-image: radial-gradient(
-    ellipse at 33% 10%,
-    #461616 0%,
-    transparent 75%
-  );
-  font-family: "Rajdhani", sans-serif;
-  line-height: 1.4;
-  margin: 0;
-  height: 100vh;
-  padding: 0 40px 40px 40px;
+@import "tailwindcss";
+
+/* Quest Board design tokens (HUD on the Modernist system) */
+@theme {
+  --font-archivo: "Archivo", system-ui, sans-serif;
+
+  --color-hud-bg: #141212;
+  --color-hud-grid-line: rgba(243, 242, 242, 0.035);
+  --color-hud-panel: #1a1818;
+  --color-hud-panel-raised: #1d1b1b;
+  --color-hud-card: #0f0e0e;
+  --color-hud-line: #2d2b2b;
+  --color-hud-line-strong: #444141;
+  --color-hud-ink: #f3f2f2;
+  --color-hud-ink-2: #eae7e7;
+  --color-hud-ink-3: #d7d3d3;
+  --color-hud-muted: #9b9797;
+  --color-hud-muted-2: #7d7979;
+  --color-hud-idle: #605d5d;
+  --color-hud-hover-fill: #242121;
+  --color-hud-accent: #ec3013;
+  --color-hud-accent-on-dark: #ff563c;
+  --color-hud-accent-light: #ff9783;
+  --color-hud-accent-deep: #ae1800;
+  --color-hud-amber: oklch(0.82 0.15 85);
 }
 
-.task-list--container {
-  height: 75vh;
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(3, 1fr);
+html,
+body,
+#root {
+  @apply bg-hud-bg text-hud-ink box-border;
+}
+
+/* HUD background: 1px grid, 40px cells (32px on mobile) */
+.app-background {
+  background-color: var(--color-hud-bg);
+  background-image:
+    linear-gradient(var(--color-hud-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-hud-grid-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+@media (max-width: 767px) {
+  .app-background {
+    background-size: 32px 32px;
+  }
+}
+
+/* Never the default focus ring */
+:focus-visible {
+  outline: 2px solid var(--color-hud-accent);
+  outline-offset: 2px;
+}
+
+/* The board uses the custom ScrollTrack instead of a native scrollbar */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Thin scrollbar inside a column's task list, in the column color */
+.quest-list {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-hud-line) transparent;
+}
+
+.quest-list:hover {
+  scrollbar-color: var(--col) transparent;
+}
+
+/* Task card: chamfered bottom-right corner, 1px inset outline.
+   --col (the column color) is set on the column. */
+.quest-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--color-hud-card);
+  box-shadow: inset 0 0 0 1px var(--color-hud-line);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    0 100%
+  );
+}
+
+.quest-card-done {
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--col) 50%, transparent);
+}
+
+/* Completion feedback */
+.quest-card-flash {
+  animation: card-flash 600ms ease-out;
+}
+
+@keyframes card-flash {
+  0%,
+  30% {
+    box-shadow:
+      inset 0 0 0 2px var(--col),
+      inset 0 0 24px color-mix(in oklch, var(--col) 30%, transparent);
+  }
+}
+
+.check-pop {
+  animation: check-pop 240ms ease-out;
+}
+
+@keyframes check-pop {
+  50% {
+    scale: 1.2;
+  }
+}
+
+.xp-float {
+  animation: xp-float 700ms ease-out forwards;
+}
+
+@keyframes xp-float {
+  to {
+    translate: 0 -24px;
+    opacity: 0;
+  }
+}
+
+.level-up-banner {
+  animation: level-up 1500ms ease-out forwards;
+}
+
+@keyframes level-up {
+  0% {
+    opacity: 0;
+    scale: 1 0;
+  }
+  12%,
+  85% {
+    opacity: 1;
+    scale: 1 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quest-card-flash,
+  .check-pop,
+  .xp-float,
+  .level-up-banner {
+    animation: none;
+  }
 }

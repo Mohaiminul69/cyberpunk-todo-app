@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Design mockups and the old cyber UI source (reference only)
+/Todo list redesign*.zip
+/cyber_src/
