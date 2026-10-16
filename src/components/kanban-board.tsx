@@ -21,6 +21,11 @@ import ConfirmDialog from "./confirm-dialog";
 import { COLUMN_COLORS, RARITIES } from "../game";
 import { useIsMobile } from "../hooks/use-media-query";
 import MobileBoard from "./mobile-board";
+import { usePersistentState } from "../hooks/use-persistent-state";
+
+// Saved data that isn't a list (corrupt or from something else) starts empty
+const asArray = <T,>(stored: unknown): T[] =>
+  Array.isArray(stored) ? (stored as T[]) : [];
 
 interface Props {
   dailyCompleted: number;
@@ -33,8 +38,16 @@ const KanbanBoard = ({
   onTaskCompleted,
   onTaskUncompleted,
 }: Props) => {
-  const [columns, setColumns] = useState<Column[]>([]);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [columns, setColumns] = usePersistentState<Column[]>(
+    "quest-board:v1:columns",
+    [],
+    asArray,
+  );
+  const [tasks, setTasks] = usePersistentState<Task[]>(
+    "quest-board:v1:tasks",
+    [],
+    asArray,
+  );
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [columnToDelete, setColumnToDelete] = useState<Column | null>(null);
@@ -51,7 +64,10 @@ const KanbanBoard = ({
 
   const isMobile = useIsMobile();
   // Mobile shows one column; fall back to the first if none is picked (or it was deleted)
-  const [mobileColumnId, setMobileColumnId] = useState<Id | null>(null);
+  const [mobileColumnId, setMobileColumnId] = usePersistentState<Id | null>(
+    "quest-board:v1:mobile-column",
+    null,
+  );
   const activeMobileColumnId = columns.some((col) => col.id === mobileColumnId)
     ? mobileColumnId
     : (columns[0]?.id ?? null);
@@ -257,6 +273,7 @@ const KanbanBoard = ({
       {draggedTask && (
         // The overlay is portalled outside its column, so pass the color explicitly
         <div
+          data-clarity-mask="true"
           className="font-archivo"
           style={
             {
@@ -320,7 +337,8 @@ const KanbanBoard = ({
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    // Task text and column names are personal: Clarity masks them in recordings
+    <div data-clarity-mask="true" className="flex min-h-0 flex-1 flex-col">
       <BoardMeta
         columnCount={columns.length}
         taskCount={tasks.length}

@@ -6,12 +6,18 @@ import {
   completeTask,
   getDailyCompleted,
   getLevelInfo,
+  reviveGame,
   uncompleteTask,
 } from "./game";
+import { usePersistentState } from "./hooks/use-persistent-state";
 import "./App.css";
 
 function App() {
-  const [game, setGame] = useState(INITIAL_GAME);
+  const [game, setGame] = usePersistentState(
+    "quest-board:v1:game",
+    INITIAL_GAME,
+    reviveGame,
+  );
   const [levelUpTo, setLevelUpTo] = useState<number | null>(null);
 
   useEffect(() => {

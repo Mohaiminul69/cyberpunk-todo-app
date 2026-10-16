@@ -51,6 +51,17 @@ export const INITIAL_GAME: GameState = {
   daily: { day: "", completed: 0 },
 };
 
+/** Restores saved game state, filling in any fields older saves don't have */
+export const reviveGame = (stored: unknown): GameState => {
+  if (typeof stored !== "object" || stored === null) return INITIAL_GAME;
+  const game = stored as Partial<GameState>;
+  return {
+    ...INITIAL_GAME,
+    ...game,
+    daily: { ...INITIAL_GAME.daily, ...game.daily },
+  };
+};
+
 /** XP needed to go from `level` to `level + 1` */
 export const xpToNextLevel = (level: number) => 250 * level;
 

@@ -34,7 +34,9 @@ const ConfirmDialog = ({ title, body, confirmLabel, onConfirm, onCancel }: Props
         <div id="confirm-dialog-title" className="text-xl font-extrabold">
           {title}
         </div>
-        <div className="text-sm opacity-85">{body}</div>
+        <div data-clarity-mask="true" className="text-sm opacity-85">
+          {body}
+        </div>
         <div className="mt-2 flex justify-end gap-2">
           <button
             autoFocus
