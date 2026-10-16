@@ -70,8 +70,7 @@ const MobileBoard = ({
   };
 
   return (
-    // Task text and column names are personal: Clarity masks them in recordings
-    <div data-clarity-mask="true" className="flex min-h-0 flex-1 flex-col">
+    <div className="flex min-h-0 flex-1 flex-col">
       {/* Column tabs */}
       <div className="no-scrollbar -mx-5 flex shrink-0 gap-0.5 overflow-x-auto px-5 py-3.5">
         {columns.map((column) => {

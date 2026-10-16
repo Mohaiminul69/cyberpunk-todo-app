@@ -273,7 +273,6 @@ const KanbanBoard = ({
       {draggedTask && (
         // The overlay is portalled outside its column, so pass the color explicitly
         <div
-          data-clarity-mask="true"
           className="font-archivo"
           style={
             {
@@ -337,8 +336,7 @@ const KanbanBoard = ({
   }
 
   return (
-    // Task text and column names are personal: Clarity masks them in recordings
-    <div data-clarity-mask="true" className="flex min-h-0 flex-1 flex-col">
+    <div className="flex min-h-0 flex-1 flex-col">
       <BoardMeta
         columnCount={columns.length}
         taskCount={tasks.length}
