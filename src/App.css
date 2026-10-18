@@ -54,6 +54,12 @@ body,
   outline-offset: 2px;
 }
 
+/* Text fields inside a column take the column's color */
+input:focus-visible,
+textarea:focus-visible {
+  outline-color: var(--col, var(--color-hud-accent));
+}
+
 /* The board uses the custom ScrollTrack instead of a native scrollbar */
 .no-scrollbar {
   scrollbar-width: none;

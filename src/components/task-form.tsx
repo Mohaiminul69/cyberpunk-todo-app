@@ -18,8 +18,6 @@ const TaskForm = ({ onSubmit, onCancel }: Props) => {
   const submit = () => {
     if (!canSubmit) return;
     onSubmit(text.trim(), rarity);
-    // Stay open with the same rarity for quick entry of several tasks
-    setText("");
   };
 
   const appendTranscript = (transcript: string) =>

@@ -201,7 +201,10 @@ const ColumnContainer = ({
       {adding && (
         <div ref={formRef}>
           <TaskForm
-            onSubmit={(content, rarity) => createTask(column.id, content, rarity)}
+            onSubmit={(content, rarity) => {
+              createTask(column.id, content, rarity);
+              setAdding(false);
+            }}
             onCancel={() => setAdding(false)}
           />
         </div>
